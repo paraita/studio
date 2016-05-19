@@ -35,9 +35,9 @@ define(
             "Input Space Url": {type: "Text", fieldAttrs: {'placeholder': 'inputSpace->@attributes->url', "data-help":"A private read-only Data Space started manually by user with the proactive-dataserver command."}},
             "Output Space Url": {type: "Text", fieldAttrs: {'placeholder': 'outputSpace->@attributes->url', "data-help":"A private Data Space started manually by user with the proactive-dataserver command."}},
             "Maximum Number of Execution Attempts": {type: 'Number', fieldAttrs: {"data-tab": "Error Handling", 'data-tab-help': 'Configure workflow behavior upon errors', 'placeholder': '@attributes->maxNumberOfExecution', "data-help":"Defines the maximum number of execution attempts for the tasks."}},
-            "On Task Error Policy": {type: 'Select', fieldAttrs: {'placeholder': '@attributes->onTaskError', "data-help":"Actions to take if an error occurs in a task. Setting this property in the job defines the behavior for every task. Each task can overwrite this behavior.<br><br>The actions that are available at the Job level are:<br>&nbsp;&nbsp;- cancel job after all execution attempts<br>&nbsp;&nbsp;- continue job (try all execution attempts)<br>&nbsp;&nbsp;- suspend task after first error<br>&nbsp;&nbsp;- suspend task after first error and pause job immediately."}, options: [
+            "On Task Error Policy": {type: 'Select', fieldAttrs: {'placeholder': '@attributes->onTaskError', "data-help":"Actions to take if an error occurs in a task. Setting this property in the job defines the behavior for every task. Each task can overwrite this behavior.<br><br>The actions that are available at the Job level are:<br>&nbsp;&nbsp;- cancel job after all execution attempts<br>&nbsp;&nbsp;- continue job (try all execution attempts)<br>&nbsp;&nbsp;- suspend task after first error and continue others<br>&nbsp;&nbsp;- suspend task after first error and pause job immediately."}, options: [
                 {val: "cancelJob", label: "cancel job after all execution attempts"},
-                {val: "suspendTask", label: "suspend task after first error"},
+                {val: "suspendTask", label: "suspend task after first error and continue others"},
                 {val: "pauseJob", label: "suspend task after first error and pause job immediately"},
                 {val: "continueJobExecution", label: "continue job (try all execution attempts)"}
             ]},
@@ -95,6 +95,7 @@ define(
         },
         populate: function (obj, merging) {
             this.populateSchema(obj, merging);
+            this.convertCancelJobOnErrorToOnTaskError(obj);
             var that = this;
             if (obj.taskFlow && obj.taskFlow.task) {
 
@@ -120,7 +121,7 @@ define(
                         taskModel.set({'Execute': new ScriptExecutable()});
                         taskModel.set({Type: "ScriptExecutable"});
                     }
-
+                    taskModel.convertCancelJobOnErrorToOnTaskError(task);
                     taskModel.populateSchema(task);
                     taskModel.populateSimpleForm();
 
