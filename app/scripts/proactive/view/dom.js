@@ -109,6 +109,12 @@ define(
             $('#xml-view-modal').modal();
         })
 
+        $("#browse-catalog-button").click(function (event) {
+            event.preventDefault();
+            var StudioApp = require('StudioApp');
+            $('#catalog-browser-view-modal').modal();
+        })
+
         $("#layout-button").click(function (event) {
             event.preventDefault();
             require('StudioApp').views.workflowView.autoLayout();
