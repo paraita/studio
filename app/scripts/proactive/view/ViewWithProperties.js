@@ -2,16 +2,18 @@ define(
 		[
 		 'jquery',
 		 'backbone',
+		 'proactive/config',
+		 'proactive/view/dom',
 		 'proactive/view/ViewWatchingModelChange',
 		 'proactive/view/utils/undo'
-		 ],
+		],
 
-		 function ($, Backbone, ViewWatchingModelChange, undoManager) {
+		 function ($, Backbone, config, Dom, ViewWatchingModelChange, undoManager) {
 
 			"use strict";
 
 			return ViewWatchingModelChange.extend({
-
+ 
 				render: function () {
 					var that = this;
 					if (this.element) this.$el = this.element;
@@ -35,8 +37,9 @@ define(
 					});
 					this.$el.dblclick(function () {
 						event.stopPropagation();
-					})
-
+						Dom.editFullScreen();
+					});
+					
 					return this;
 				},
 				initBreadCrumb: function(StudioApp) {

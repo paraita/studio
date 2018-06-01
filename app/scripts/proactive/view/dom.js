@@ -771,10 +771,9 @@ define(
             });
         }
 
-        (function scriptManagement() {
-            $(document).on("click", '.edit-full-screen', function () {
-
-                $(".CodeMirror").remove();
+        function edit_full_screen() {
+            console.log("Edit stuff full screen");
+            $(".CodeMirror").remove();
                 var textarea = $(this).parents('form').find('textarea');
                 var select = $(this).parents('form').find('select');
                 var selectedLanguage = select.val()
@@ -785,11 +784,8 @@ define(
                         language = modes[property]
                      }
                 }
-
                 var dictionary = config.dictionary.concat(config.keywords[selectedLanguage])
-
                 var WORD = /[\w]+$/, WORD2 = /[\w$]+/g, RANGE = 500;
-
                 CodeMirror.registerHelper("hint", "anyword", function(editor, options) {
                     var word = options && options.word || WORD;
                     var word2 = options && options.word || WORD2;
@@ -809,7 +805,6 @@ define(
                         }
                     }
 
-
                     function scan(dir) {
                       var line = cur.line, end = Math.min(Math.max(line + dir * range, editor.firstLine()), editor.lastLine()) + dir;
                       for (; line != end; line += dir) {
@@ -827,7 +822,6 @@ define(
                     scan(1);
                     return {list: list, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end)};
                 });
-
                 var content = textarea.val();
                 $("#set-script-content").data("area", textarea);
                 $("#full-edit-modal-script-content").val(content);
@@ -868,9 +862,11 @@ define(
                     var lastCol = table.find("td:last")
                     $(".code-editor-container").height($("#full-edit-modal").height() * 0.8 - firstCol.height() - lastCol.height())
                 }
-
                 return false;
-            })
+        }
+
+        (function scriptManagement() {
+            $(document).on("click", '.edit-full-screen', edit_full_screen);
             $('#full-edit-modal').on('shown.bs.modal', function () {
                 $('#variable_reference_link').attr("href", config.docUrl + "/user/ProActiveUserGuide.html#_variables_quick_reference")
                 $(".CodeMirror").height($(".code-editor-container").height())
@@ -968,7 +964,8 @@ define(
        return {
            saveWorkflow: save_workflow,
            getWorkflowFromCatalog : getWorkflowFromCatalog,
-           open_catalog_workflow : open_catalog_workflow
+           open_catalog_workflow : open_catalog_workflow,
+           editFullScreen: edit_full_screen
        };
 
     });
